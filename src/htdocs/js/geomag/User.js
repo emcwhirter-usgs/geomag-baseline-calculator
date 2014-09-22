@@ -36,5 +36,7 @@ define([
 		}
 	}));
 
+	// TODO throw exception?
+
 	return User;
 });
