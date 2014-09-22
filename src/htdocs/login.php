@@ -1,7 +1,7 @@
 <?php
 
 /**
- * - login.php?returnto=URL&username&password
+ * login.php?returnto=URL&username&password
  *     Have user?      --> Y -->  Redirect
  *        ↓ N                        ↑ Y
  *     Authenticating  --> Y -->  Valid User?
@@ -38,6 +38,7 @@ if (!isset($_SESSION['userid']) && isset($_POST['enter'])){
 }
 
 //reload session roles at beginning of each request
+// TODO update this SQL to match actual database for Web Absolutes users
 $_SESSION['roles'] = array();
 if(isset($_SESSION['userid'])) {
 	$roles_query = "
