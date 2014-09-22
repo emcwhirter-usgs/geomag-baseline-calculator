@@ -1,0 +1,8 @@
+<?php
+
+/**
+ * - Clear session
+ * - Redirect
+ */
+
+?>
