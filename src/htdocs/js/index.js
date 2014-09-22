@@ -9,7 +9,8 @@ require.config({
 });
 
 require([
-	'geomag/ObservatoryView'
+	'geomag/ObservatoryView',
+	'geomag/User'
 ], function (ObservatoryView) {
 	'use strict';
 	new ObservatoryView({el: document.querySelector('.observatory-view')});
