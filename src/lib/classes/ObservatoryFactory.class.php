@@ -260,6 +260,9 @@ class ObservatoryFactory {
 	 *        $correction {Double}
 	 *        The pier correction value.
 	 *
+	 * @return {Object}
+	 *      The object read back from the database.
+	 *
 	 * @throws {Exception}
 	 *      Can throw an exception if an SQL error occurs. See "triggerError"
 	 */
@@ -291,6 +294,12 @@ class ObservatoryFactory {
 			$this->db->rollback();
 			$this->triggerError($statement);
 		}
+
+		$statement->closeCursor();
+
+		$pier_id = intval($this->db->lastInsertId());
+		$this->db->commit();
+		return $this->getPiers($pier_id);
 	}
 
 	/**
@@ -302,6 +311,9 @@ class ObservatoryFactory {
 	 *        The name of the mark.
 	 *        $azimuth {Double}
 	 *        The azimuth value at the mark.
+	 *
+	 * @return {Object}
+	 *      The object read back from the database.
 	 *
 	 * @throws {Exception}
 	 *      Can throw an exception if an SQL error occurs. See "triggerError"
@@ -326,6 +338,12 @@ class ObservatoryFactory {
 			$this->db->rollback();
 			$this->triggerError($statement);
 		}
+
+		$statement->closeCursor();
+
+		$mark_id = intval($this->db->lastInsertId());
+		$this->db->commit();
+		return $this->getMarks($mark_id);
 	}
 
 	/**
@@ -337,6 +355,9 @@ class ObservatoryFactory {
 	 *        The serial number of the instrument.
 	 *        $type {String}
 	 *        The type of instrument (Theodolite or Electronics).
+	 *
+	 * @return {Object}
+	 *      The object read back from the database.
 	 *
 	 * @throws {Exception}
 	 *      Can throw an exception if an SQL error occurs. See "triggerError"
@@ -363,6 +384,12 @@ class ObservatoryFactory {
 			$this->db->rollback();
 			$this->triggerError($statement);
 		}
+
+		$statement->closeCursor();
+
+		$instrument_id = intval($this->db->lastInsertId());
+		$this->db->commit();
+		return $this->getInstruments($instrument_id);
 	}
 
 	protected function triggerError (&$statement) {
