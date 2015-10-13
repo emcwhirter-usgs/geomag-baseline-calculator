@@ -65,9 +65,9 @@ var __saveError = function (status, xhr) {
  */
 var __publishSuccess = function () {
   (ModalView(
-    '<h3>Success!</h3><p>Your observation has been finalized.</p>',
+    '<h3>Success!</h3><p>Your observation has been marked as reviewed.</p>',
     {
-      title: 'Baselines successfully finalized',
+      title: 'Baselines successfully marked as reviewed',
       classes: ['modal-success'],
       closable: true
     }
@@ -86,7 +86,7 @@ var __publishError = function (status, xhr) {
   (ModalView(
     '<h3>Error</h3><p>' + xhr.response + '</p>',
     {
-      title: 'Failed to finalize baselines',
+      title: 'Failed to mark baselines as reviewed',
       classes: ['modal-error'],
       closable: true
     }
@@ -193,7 +193,7 @@ var ObservationView = function (options) {
     // Add publish button for admin users
     if (_user.get('admin') === 'Y') {
       _publishButton = document.createElement('button');
-      _publishButton.innerHTML = 'Finalize';
+      _publishButton.innerHTML = 'Mark as Reviewed';
       controls.appendChild(_publishButton);
 
       _publishButton.addEventListener('click', _onPublishClick);
@@ -325,14 +325,14 @@ var ObservationView = function (options) {
    */
   _onPublishClick = function () {
     try {
-      _saveObservation(function () {
+      // _saveObservation(function () {
           _publishObservation(function () {
             __publishSuccess();
           }
         );
-      });
+      // });
     } catch (e) {
-      __publishError('Failed to finalize baselines', e.message);
+      __publishError('Failed to mark baselines as reviewed', e.message);
     }
   };
 
@@ -352,15 +352,19 @@ var ObservationView = function (options) {
    *        called after publish fails.
    */
   _publishObservation = function (callback, errback) {
-    _factory.publishObservation({
+    // Update observation reading model with calibrations before saving.
+    _this.updateCalibrations();
+
+    // Make sure the reviewer is set on the observation before saving.
+    _observation.set({
+      reviewed: _observation.get('reviewed'),
+      reviewer_user_id: _observation.get('reviewer_user_id')
+    });
+
+    _factory.saveObservation({
       observation: _observation,
-      user: _observation.get('reviewer_user_id'),
       success: function (observation) {
-        _observation.set({
-          reviewed: observation.get('reviewed'),
-          reviewer_user_id: observation.get('reviewer_user_id')
-        });
-        _removeControls();
+        _observation.set({id: observation.get('id')}, {silent: true});
         callback();
       },
       error: function (status, xhr) {
@@ -382,7 +386,7 @@ var ObservationView = function (options) {
    *        called after save fails.
    */
   _saveObservation = function (callback, errback) {
-    // update observation reading model with calibrations before saving
+    // Update observation reading model with calibrations before saving.
     _this.updateCalibrations();
 
     _factory.saveObservation({
