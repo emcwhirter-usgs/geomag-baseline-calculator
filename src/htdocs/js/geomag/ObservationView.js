@@ -65,9 +65,9 @@ var __saveError = function (status, xhr) {
  */
 var __publishSuccess = function () {
   (ModalView(
-    '<h3>Success!</h3><p>Your observation has been marked as reviewed.</p>',
+    '<h3>Success!</h3><p>Observation marked as reviewed.</p>',
     {
-      title: 'Baselines successfully marked as reviewed',
+      title: 'Observation successfully marked as reviewed',
       classes: ['modal-success'],
       closable: true
     }
@@ -86,7 +86,7 @@ var __publishError = function (status, xhr) {
   (ModalView(
     '<h3>Error</h3><p>' + xhr.response + '</p>',
     {
-      title: 'Failed to mark baselines as reviewed',
+      title: 'Failed to mark observation as reviewed',
       classes: ['modal-error'],
       closable: true
     }
@@ -178,7 +178,10 @@ var ObservationView = function (options) {
    *
    */
   _createControls = function () {
-    var controls;
+    var classname,
+        controls,
+        icon,
+        tooltip;
 
     controls = _this.el.querySelector('.observation-view-controls');
 
@@ -197,6 +200,29 @@ var ObservationView = function (options) {
       controls.appendChild(_publishButton);
 
       _publishButton.addEventListener('click', _onPublishClick);
+
+      icon = document.createElement('span');
+      classname = _observation.get('reviewed');
+      if (classname) {
+        classname = classname.toLowerCase();
+
+        if (classname === 'n') {
+          // icon.innerHTML = 'Not Reviewed';
+          tooltip = 'Observation Pending Review';
+        } else if (classname === 'y') {
+          // icon.innerHTML = 'Reviewed';
+          tooltip = 'Observation Approved';
+        }
+
+        classname = 'review-status-' + classname.toLowerCase();
+      } else {
+        classname = 'review-status-unknown';
+        tooltip = 'Observation in unknown review status!';
+      }
+      icon.className = classname;
+      icon.title = tooltip;
+
+      controls.appendChild(icon);
     }
   };
 
@@ -332,7 +358,7 @@ var ObservationView = function (options) {
         );
       // });
     } catch (e) {
-      __publishError('Failed to mark baselines as reviewed', e.message);
+      __publishError('Failed to mark observation as reviewed', e.message);
     }
   };
 
@@ -457,11 +483,11 @@ var ObservationView = function (options) {
     _annotation.addEventListener('change', _onChange);
 
     // Add save/publish buttons based on roles
-    if (_observation.get('reviewed') === 'N') {
-      _createControls();
-    } else {
-      _removeControls();
-    }
+    // if (_observation.get('reviewed') === 'N') {
+    _createControls();
+    // } else {
+    //   _removeControls();
+    // }
   };
 
   /**
