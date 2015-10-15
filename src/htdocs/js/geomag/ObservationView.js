@@ -179,15 +179,33 @@ var ObservationView = function (options) {
    */
   _createControls = function () {
     var admin,
-        classname,
         controls,
-        icon,
         reviewed,
+        status,
+        statusLabel,
         tooltip;
 
     admin = _user.get('admin');
     controls = _this.el.querySelector('.observation-view-controls');
     reviewed = _observation.get('reviewed').toLowerCase();
+
+    statusLabel = document.createElement('span');
+    statusLabel.className = 'review-status-' + reviewed;
+
+    if (reviewed ==='y') {
+      status = 'Status: Reviewed';
+      tooltip = 'Observation Reviewed';
+    } else if (reviewed ==='n') {
+      status = 'Status: Pending Review';
+      tooltip = 'Observation Pending Review';
+    } else {
+      status = 'Status: Unknown';
+      tooltip = 'Observation in unknown review status!';
+    }
+
+    statusLabel.innerHTML = status;
+    statusLabel.title = tooltip;
+    controls.appendChild(statusLabel);
 
     // Don't let non-admin users change reviewed observations.
     if((reviewed === 'n') || (admin === 'Y')) {
@@ -207,27 +225,6 @@ var ObservationView = function (options) {
       controls.appendChild(_publishButton);
 
       _publishButton.addEventListener('click', _onPublishClick);
-
-      icon = document.createElement('span');
-      classname = reviewed;
-      if (classname) {
-        if (classname === 'n') {
-          // icon.innerHTML = 'Not Reviewed';
-          tooltip = 'Observation Pending Review';
-        } else if (classname === 'y') {
-          // icon.innerHTML = 'Reviewed';
-          tooltip = 'Observation Approved';
-        }
-
-        classname = 'review-status-' + classname.toLowerCase();
-      } else {
-        classname = 'review-status-unknown';
-        tooltip = 'Observation in unknown review status!';
-      }
-      icon.className = classname;
-      icon.title = tooltip;
-
-      controls.appendChild(icon);
     }
   };
 
