@@ -178,23 +178,30 @@ var ObservationView = function (options) {
    *
    */
   _createControls = function () {
-    var classname,
+    var admin,
+        classname,
         controls,
         icon,
+        reviewed,
         tooltip;
 
+    admin = _user.get('admin');
     controls = _this.el.querySelector('.observation-view-controls');
+    reviewed = _observation.get('reviewed').toLowerCase();
 
-    _saveButton = document.createElement('button');
-    _saveButton.id = 'saveButton';
-    _saveButton.innerHTML = 'Save Observation';
+    // Don't let non-admin users change reviewed observations.
+    if((reviewed === 'n') || (admin === 'Y')) {
+      _saveButton = document.createElement('button');
+      _saveButton.id = 'saveButton';
+      _saveButton.innerHTML = 'Save Observation';
 
-    _saveButton.addEventListener('click', _onSaveClick);
+      _saveButton.addEventListener('click', _onSaveClick);
 
-    controls.appendChild(_saveButton);
+      controls.appendChild(_saveButton);
+    }
 
     // Add publish button for admin users
-    if (_user.get('admin') === 'Y') {
+    if (admin === 'Y') {
       _publishButton = document.createElement('button');
       _publishButton.innerHTML = 'Mark as Reviewed';
       controls.appendChild(_publishButton);
@@ -202,10 +209,8 @@ var ObservationView = function (options) {
       _publishButton.addEventListener('click', _onPublishClick);
 
       icon = document.createElement('span');
-      classname = _observation.get('reviewed');
+      classname = reviewed;
       if (classname) {
-        classname = classname.toLowerCase();
-
         if (classname === 'n') {
           // icon.innerHTML = 'Not Reviewed';
           tooltip = 'Observation Pending Review';
