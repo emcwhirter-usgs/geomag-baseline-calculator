@@ -13,7 +13,7 @@ if (isset($CURRENT_USER)) {
   $navItems .=
     navItem($MOUNT_PATH . '/index.php', 'Dashboard') .
     navItem($MOUNT_PATH . '/observation/' . $observatoryId,
-        'Observation Input');
+        'Add New Observation');
 
   if ($CURRENT_USER['admin'] === 'Y') {
     $navItems .= navItem($MOUNT_PATH . '/plot.php', 'Baseline Plot');

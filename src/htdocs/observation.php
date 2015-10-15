@@ -8,7 +8,11 @@ if (!isset($TEMPLATE)) {
     $id = intval($id, 10);
   }
 
-  $TITLE = 'Observation Input';
+  if ($id > 0) {
+    $TITLE = 'Edit Observation';
+  } else {
+    $TITLE = 'Add New Observation';
+  }
 
   $NAVIGATION = true;
   $HEAD = '<link rel="stylesheet" href="'.$MOUNT_PATH.'/css/observation.css"/>';
