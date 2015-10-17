@@ -706,7 +706,9 @@ var ObservationView = function (options) {
       el: el.querySelector('.observation-meta-wrapper'),
       observation: _observation,
       observatories: _observatories,
-      observatoryId: parseInt(window.location.hash.replace('#', ''), 10)
+      observatoryId: parseInt(window.location.hash.replace('#', ''), 10),
+      observerCollection: _observerCollection,
+      reviewerCollection: _reviewerCollection
     });
   };
 

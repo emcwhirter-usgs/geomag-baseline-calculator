@@ -114,6 +114,9 @@ var ObservationMetaView = function (options) {
     _userFactory = options.userFactory;
     _user = User.getCurrentUser();
 
+    _observerCollection = options.observerCollection;
+    _reviewerCollection = options.reviewerCollection;
+
     _createViewSkeleton();
     _getUsers();
 
@@ -395,34 +398,38 @@ var ObservationMetaView = function (options) {
    */
 
   _getUsers = function () {
-    _userFactory.get({
-      success: function (data) {
-        data = data.map(function (info) {return User(info);});
+    // _userFactory.get({
+    //   success: function (data) {
+    //     data = data.map(function (info) {return User(info);});
+    //
+    //     data.sort(function(a, b) {
+    //       // sort alphabetically by username.
+    //       if (a.get('username') < b.get('username')) {
+    //         return -1;
+    //       } else {
+    //         return 1;
+    //       }
+    //     });
+    //
+    //     _observerCollection = Collection(data);
+    //     _reviewerCollection = Collection(data);
+    //
+    //     // load observers collection
+    //     _observerSelectView.setCollection(_observerCollection);
+    //     _observerSelectView.selectById(_observation.get('observer_user_id'));
+    //     // load reviewers collection
+    //     _reviewerSelectView.setCollection(_reviewerCollection);
+    //     _reviewerSelectView.selectById(_observation.get('reviewer_user_id'));
+    //   },
+    //   error: function () {/* TODO :: Show modal dialog error message */}
+    // });
 
-        data.sort(function(a, b) {
-          // sort alphabetically by username.
-          if (a.get('username') < b.get('username')) {
-            return -1;
-          } else {
-            return 1;
-          }
-        });
-
-        _observerCollection = Collection(data);
-        _reviewerCollection = Collection(data);
-
-        // load observers collection
-        _observerSelectView.setCollection(_observerCollection);
-        _observerSelectView.selectById(_observation.get('observer_user_id'));
-        // load reviewers collection
-        _reviewerSelectView.setCollection(_reviewerCollection);
-        _reviewerSelectView.selectById(_observation.get('reviewer_user_id'));
-      },
-      error: function () {/* TODO :: Show modal dialog error message */}
-    });
-
-    _this.observerCollection = _observerCollection;
-    _this.reviewerCollection = _reviewerCollection;
+    // load observers collection
+    _observerSelectView.setCollection(_observerCollection);
+    _observerSelectView.selectById(_observation.get('observer_user_id'));
+    // load reviewers collection
+    _reviewerSelectView.setCollection(_reviewerCollection);
+    _reviewerSelectView.selectById(_observation.get('reviewer_user_id'));
   };
 
   _onDateChange = function () {
