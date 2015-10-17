@@ -432,6 +432,16 @@ var instrument = function (inst) {
 };
 
 /**
+ * Formatting callback for mark select view.
+ *
+ * @param mk {Mark}
+ * @return {String} content for option element.
+ */
+var mark = function (mk) {
+  return mk.get('name') + ' (' + mk.get('azimuth') + '&deg;)';
+};
+
+/**
  * nT (nano-teslas)
  *
  * @param {Number} nT
@@ -536,6 +546,16 @@ var parseRelativeTime = function (relativeTime, offset) {
 };
 
 /**
+ * Formatting callback for pier select view.
+ *
+ * @param pr {Pier}
+ * @return {String} content for option element.
+ */
+var pier = function (pr) {
+  return pr.get('name') + ' (' + pr.get('correction') + ' nT)';
+};
+
+/**
  * Time to String
  *
  * @param time {Date|Integer}
@@ -587,10 +607,12 @@ var Formatter = {
   dmsToDecimal: dmsToDecimal,
   fahrenheit: fahrenheit,
   instrument: instrument,
+  mark: mark,
   minutes: minutes,
   nanoteslas: nanoteslas,
   parseDate: parseDate,
   parseRelativeTime: parseRelativeTime,
+  pier: pier,
   rawCelsius: rawCelsius,
   rawDegrees: rawDegrees,
   rawFahrenheit: rawFahrenheit,

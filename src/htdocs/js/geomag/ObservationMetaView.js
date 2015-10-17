@@ -90,8 +90,6 @@ var ObservationMetaView = function (options) {
       _userFactory,
 
       _createViewSkeleton,
-      _formatMark,
-      _formatPier,
       _getUsers,
       _onDateChange,
       _onPierTempChange,
@@ -216,12 +214,12 @@ var ObservationMetaView = function (options) {
     _pierSelectView = CollectionSelectBox({
       el: el.querySelector('.pier'),
       emptyText: 'Select observatory...',
-      formatOption: _formatPier
+      formatOption: Format.pier
     });
     _marksSelectView = CollectionSelectBox({
       el: el.querySelector('.mark'),
       emptyText: 'Select pier...',
-      formatOption: _formatMark
+      formatOption: Format.mark
     });
     _electronicsSelectView = CollectionSelectBox({
       el: el.querySelector('.electronics'),
@@ -388,26 +386,6 @@ var ObservationMetaView = function (options) {
     // load observatories collection
     _observatorySelectView.setCollection(_observatories);
     _observatorySelectView.selectById(_observatoryId);
-  };
-
-  /**
-   * Formatting callback for mark select view.
-   *
-   * @param mark {Mark}
-   * @return {String} content for option element.
-   */
-  _formatMark = function (mark) {
-    return mark.get('name') + ' (' + mark.get('azimuth') + '&deg;)';
-  };
-
-  /**
-   * Formatting callback for pier select view.
-   *
-   * @param pier {Pier}
-   * @return {String} content for option element.
-   */
-  _formatPier = function (pier) {
-    return pier.get('name') + ' (' + pier.get('correction') + ' nT)';
   };
 
   /**
@@ -596,8 +574,6 @@ var ObservationMetaView = function (options) {
 
         // Clean up private methods
         _createViewSkeleton = null;
-        _formatMark = null;
-        _formatPier = null;
         _getUsers = null;
         _onDateChange = null;
         _onPierTempChange = null;
