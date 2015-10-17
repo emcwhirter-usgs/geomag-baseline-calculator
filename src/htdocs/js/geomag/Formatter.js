@@ -415,6 +415,23 @@ var fahrenheit = function (temperature, digits) {
 };
 
 /**
+ * Formatting callback for electronics and theodolite select views.
+ *
+ * @param inst {Instrument}
+ * @return {String} content for option element.
+ */
+var instrument = function (inst) {
+  var name = inst.get('name'),
+      serial = inst.get('serial_number');
+
+  if (name) {
+    return name + ' (' + serial + ')';
+  } else {
+    return serial;
+  }
+};
+
+/**
  * nT (nano-teslas)
  *
  * @param {Number} nT
@@ -569,6 +586,7 @@ var Formatter = {
   degreesMinutes: degreesMinutes,
   dmsToDecimal: dmsToDecimal,
   fahrenheit: fahrenheit,
+  instrument: instrument,
   minutes: minutes,
   nanoteslas: nanoteslas,
   parseDate: parseDate,

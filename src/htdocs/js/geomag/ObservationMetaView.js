@@ -90,7 +90,6 @@ var ObservationMetaView = function (options) {
       _userFactory,
 
       _createViewSkeleton,
-      _formatInstrument,
       _formatMark,
       _formatPier,
       _getUsers,
@@ -227,12 +226,12 @@ var ObservationMetaView = function (options) {
     _electronicsSelectView = CollectionSelectBox({
       el: el.querySelector('.electronics'),
       emptyText: 'Select observatory...',
-      formatOption: _formatInstrument
+      formatOption: Format.instrument
     });
     _theodoliteSelectView = CollectionSelectBox({
       el: el.querySelector('.theodolite'),
       emptyText: 'Select observatory...',
-      formatOption: _formatInstrument
+      formatOption: Format.instrument
     });
 
     // observation inputs
@@ -389,23 +388,6 @@ var ObservationMetaView = function (options) {
     // load observatories collection
     _observatorySelectView.setCollection(_observatories);
     _observatorySelectView.selectById(_observatoryId);
-  };
-
-  /**
-   * Formatting callback for electronics and theodolite select views.
-   *
-   * @param instrument {Instrument}
-   * @return {String} content for option element.
-   */
-  _formatInstrument = function (instrument) {
-    var name = instrument.get('name'),
-        serial = instrument.get('serial_number');
-
-    if (name) {
-      return name + ' (' + serial + ')';
-    } else {
-      return serial;
-    }
   };
 
   /**
@@ -614,7 +596,6 @@ var ObservationMetaView = function (options) {
 
         // Clean up private methods
         _createViewSkeleton = null;
-        _formatInstrument = null;
         _formatMark = null;
         _formatPier = null;
         _getUsers = null;
