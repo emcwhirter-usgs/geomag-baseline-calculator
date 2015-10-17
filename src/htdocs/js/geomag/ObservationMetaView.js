@@ -93,7 +93,6 @@ var ObservationMetaView = function (options) {
       _formatInstrument,
       _formatMark,
       _formatPier,
-      _formatUsername,
       _getUsers,
       _onDateChange,
       _onPierTempChange,
@@ -204,12 +203,12 @@ var ObservationMetaView = function (options) {
     _observerSelectView = CollectionSelectBox({
       el: el.querySelector('.observer-select'),
       emptyText: 'Loading observers...',
-      formatOption: _formatUsername
+      formatOption: Format.username
     });
     _reviewerSelectView = CollectionSelectBox({
       el: el.querySelector('.reviewer-select'),
       emptyText: 'Loading reviewers...',
-      formatOption: _formatUsername
+      formatOption: Format.username
     });
     _observatorySelectView = CollectionSelectBox({
       el: el.querySelector('.observatory'),
@@ -430,23 +429,6 @@ var ObservationMetaView = function (options) {
   };
 
   /**
-   * Formatting callback for observer select view.
-   *
-   * @param observer {User}
-   * @return {String} content for option element.
-   */
-  _formatUsername = function (user) {
-    var name;
-
-    name = user.get('username');
-    if (user.get('enabled') === 'N') {
-      name = name + ' (disabled)';
-    }
-
-    return name;
-  };
-
-  /**
    * Input element change handler.
    *
    * Updated observation begin and pier_temperature attributes from form.
@@ -635,7 +617,6 @@ var ObservationMetaView = function (options) {
         _formatInstrument = null;
         _formatMark = null;
         _formatPier = null;
-        _formatUsername = null;
         _getUsers = null;
         _onDateChange = null;
         _onPierTempChange = null;

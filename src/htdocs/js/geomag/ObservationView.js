@@ -8,6 +8,7 @@ var Collection = require('mvc/Collection'),
     View = require('mvc/View'),
 
     Calculator = require('geomag/ObservationBaselineCalculator'),
+    Format = require('geomag/Formatter'),
     ObservationMetaView = require('geomag/ObservationMetaView'),
     ObservatoryFactory = require('geomag/ObservatoryFactory'),
     ReadingGroupView = require('geomag/ReadingGroupView'),
@@ -136,7 +137,6 @@ var ObservationView = function (options) {
 
       _addUserControls,
       _createControls,
-      _formatUsername,
       _formatMeasurementErrors,
       _getRealtimeData,
       _getUsers,
@@ -251,13 +251,13 @@ var ObservationView = function (options) {
     _observerSelectView = CollectionSelectBox({
       el: observerSelect,
       emptyText: 'Loading observers...',
-      formatOption: _formatUsername
+      formatOption: Format.username
     });
     _reviewerSelect = reviewerSelect;
     _reviewerSelectView = CollectionSelectBox({
       el: reviewerSelect,
       emptyText: 'Loading reviewers...',
-      formatOption: _formatUsername
+      formatOption: Format.username
     });
     _admin = admin;
 
@@ -389,23 +389,6 @@ var ObservationView = function (options) {
     }
 
     return '<li>' + markup.join('</li><li>') + '</li>';
-  };
-
-  /**
-   * Formatting callback for observer select view.
-   *
-   * @param observer {User}
-   * @return {String} content for option element.
-   */
-  _formatUsername = function (user) {
-    var name;
-
-    name = user.get('username');
-    if (user.get('enabled') === 'N') {
-      name = name + ' (disabled)';
-    }
-
-    return name;
   };
 
   /**
@@ -909,7 +892,6 @@ var ObservationView = function (options) {
       // Clean up private methods
       _addUserControls = null;
       _createControls = null;
-      _formatUsername = null;
       _formatMeasurementErrors = null;
       _getRealtimeData = null;
       _getUsers = null;

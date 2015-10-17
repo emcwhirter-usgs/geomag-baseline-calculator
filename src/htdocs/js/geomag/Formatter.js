@@ -541,6 +541,23 @@ var time = function (time) {
   return [(h<10?'0':''), h, (m<10?':0':':'), m, (s<10?':0':':'), s].join('');
 };
 
+/**
+ * Formatting callback for observer select view.
+ *
+ * @param observer {User}
+ * @return {String} content for option element.
+ */
+var username = function (user) {
+  var name;
+
+  name = user.get('username');
+  if (user.get('enabled') === 'N') {
+    name = name + ' (disabled)';
+  }
+
+  return name;
+};
+
 var Formatter = {
   _units: _units,
   celsius: celsius,
@@ -564,7 +581,8 @@ var Formatter = {
   roundHalfToEven: roundHalfToEven,
   roundToEven: roundToEven,
   time: time,
-  truncate: truncate
+  truncate: truncate,
+  username: username
 };
 
 module.exports = Formatter;
