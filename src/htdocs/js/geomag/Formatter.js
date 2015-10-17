@@ -441,6 +441,26 @@ var mark = function (mk) {
   return mk.get('name') + ' (' + mk.get('azimuth') + '&deg;)';
 };
 
+var measurementErrors = function (measurement) {
+  var time_error = measurement.get('time_error'),
+      angle_error = measurement.get('angle_error'),
+      markup = [];
+
+  if (time_error !== null) {
+    markup.push(measurement.get('type') + ' - ' + time_error);
+  }
+
+  if (angle_error !== null) {
+    markup.push(measurement.get('type') + ' - ' + angle_error);
+  }
+
+  if (markup.length === 0) {
+    return null;
+  }
+
+  return '<li>' + markup.join('</li><li>') + '</li>';
+};
+
 /**
  * nT (nano-teslas)
  *
@@ -608,6 +628,7 @@ var Formatter = {
   fahrenheit: fahrenheit,
   instrument: instrument,
   mark: mark,
+  measurementErrors: measurementErrors,
   minutes: minutes,
   nanoteslas: nanoteslas,
   parseDate: parseDate,

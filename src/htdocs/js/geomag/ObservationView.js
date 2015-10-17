@@ -137,7 +137,6 @@ var ObservationView = function (options) {
 
       _addUserControls,
       _createControls,
-      _formatMeasurementErrors,
       _getRealtimeData,
       _getUsers,
       _onChange,
@@ -369,26 +368,6 @@ var ObservationView = function (options) {
 
       _publishButton.addEventListener('click', _onPublishClick);
     }
-  };
-
-  _formatMeasurementErrors = function (measurement) {
-    var time_error = measurement.get('time_error'),
-        angle_error = measurement.get('angle_error'),
-        markup = [];
-
-    if (time_error !== null) {
-      markup.push(measurement.get('type') + ' - ' + time_error);
-    }
-
-    if (angle_error !== null) {
-      markup.push(measurement.get('type') + ' - ' + angle_error);
-    }
-
-    if (markup.length === 0) {
-      return null;
-    }
-
-    return '<li>' + markup.join('</li><li>') + '</li>';
   };
 
   /**
@@ -804,7 +783,7 @@ var ObservationView = function (options) {
       reading.eachMeasurement(function (measurement) {
 
         // get all errors for the measurement
-        measurementErrors = _formatMeasurementErrors(measurement);
+        measurementErrors = Format.measurementErrors(measurement);
 
         // check for number of measurement errors
         if (measurementErrors !== null) {
@@ -892,7 +871,6 @@ var ObservationView = function (options) {
       // Clean up private methods
       _addUserControls = null;
       _createControls = null;
-      _formatMeasurementErrors = null;
       _getRealtimeData = null;
       _getUsers = null;
       _onChange = null;
