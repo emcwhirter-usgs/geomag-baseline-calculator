@@ -3,18 +3,19 @@
 
 var Collection = require('mvc/Collection'),
     CollectionSelectBox = require('mvcutil/CollectionSelectBox'),
+    Util = require('util/Util'),
+    View = require('mvc/View'),
+
     Format = require('geomag/Formatter'),
     User = require('geomag/User'),
     UserFactory = require('geomag/UserFactory'),
-    Util = require('util/Util'),
-    Validate = require('geomag/Validate'),
-    View = require('mvc/View');
+    Validate = require('geomag/Validate');
 
 
 // default constructor options
 var _DEFAULTS = {
   observatoryId: null,
-  UserFactory: UserFactory({
+  userFactory: UserFactory({
     url: MOUNT_PATH + '/user_data.php'
   })
 };
@@ -76,10 +77,12 @@ var ObservationMetaView = function (options) {
       _observatoryId,
       _observatorySelectView,
       _observatories,
+      _observerCollection,
       _observerSelect,
       _observerSelectView,
       _pierSelectView,
       _pierTemperature,
+      _reviewerCollection,
       _reviewerSelect,
       _reviewerSelectView,
       _theodoliteSelectView,
@@ -112,7 +115,7 @@ var ObservationMetaView = function (options) {
     _observatories = options.observatories || Collection([]);
     _observatoryId = options.observatoryId;
 
-    _userFactory = options.UserFactory;
+    _userFactory = options.userFactory;
     _user = User.getCurrentUser();
 
     _createViewSkeleton();
@@ -452,8 +455,6 @@ var ObservationMetaView = function (options) {
   _getUsers = function () {
     _userFactory.get({
       success: function (data) {
-        var reviewers;
-
         data = data.map(function (info) {return User(info);});
 
         data.sort(function(a, b) {
@@ -465,18 +466,21 @@ var ObservationMetaView = function (options) {
           }
         });
 
-        reviewers = Collection(data);
-        data = Collection(data);
+        _observerCollection = Collection(data);
+        _reviewerCollection = Collection(data);
 
         // load observers collection
-        _observerSelectView.setCollection(data);
+        _observerSelectView.setCollection(_observerCollection);
         _observerSelectView.selectById(_observation.get('observer_user_id'));
         // load reviewers collection
-        _reviewerSelectView.setCollection(reviewers);
+        _reviewerSelectView.setCollection(_reviewerCollection);
         _reviewerSelectView.selectById(_observation.get('reviewer_user_id'));
       },
       error: function () {/* TODO :: Show modal dialog error message */}
     });
+
+    _this.observerCollection = _observerCollection;
+    _this.reviewerCollection = _reviewerCollection;
   };
 
   _onDateChange = function () {

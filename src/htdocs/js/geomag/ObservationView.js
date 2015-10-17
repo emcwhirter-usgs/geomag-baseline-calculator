@@ -1,6 +1,8 @@
+/* global MOUNT_PATH */
 'use strict';
 
 var Collection = require('mvc/Collection'),
+    CollectionSelectBox = require('mvcutil/CollectionSelectBox'),
     ModalView = require('mvc/ModalView'),
     Util = require('util/Util'),
     View = require('mvc/View'),
@@ -10,14 +12,18 @@ var Collection = require('mvc/Collection'),
     ObservatoryFactory = require('geomag/ObservatoryFactory'),
     ReadingGroupView = require('geomag/ReadingGroupView'),
     RealtimeDataFactory = require('geomag/RealtimeDataFactory'),
-    User = require('geomag/User');
+    User = require('geomag/User'),
+    UserFactory = require('geomag/UserFactory');
 
 
 var _DEFAULTS = {
   calculator: null,
   factory: null,
   observationId: null,
-  realtimeDataFactory: null
+  realtimeDataFactory: null,
+  userFactory: UserFactory({
+    url: MOUNT_PATH + '/user_data.php'
+  })
 };
 
 
@@ -108,21 +114,32 @@ var ObservationView = function (options) {
   var _this,
       _initialize,
 
+      _admin,
       _annotation,
       _calculator,
       _factory,
       _observation,
       _observatories,
       _observationMetaView,
+      _observerCollection,
+      _observerSelect,
+      _observerSelectView,
       _publishButton,
       _readingGroupView,
       _realtimeDataFactory,
+      _reviewerCollection,
+      _reviewerSelect,
+      _reviewerSelectView,
       _saveButton,
       _user,
+      _userFactory,
 
+      _addUserControls,
       _createControls,
+      _formatUsername,
       _formatMeasurementErrors,
       _getRealtimeData,
+      _getUsers,
       _onChange,
       _onObservatorySelect,
       _onPublishClick,
@@ -130,6 +147,7 @@ var ObservationView = function (options) {
       _publishObservation,
       _removeControls,
       _removeEventListeners,
+      _removeUserControls,
       _saveObservation,
       _setObservation,
       _setObservatories,
@@ -152,6 +170,7 @@ var ObservationView = function (options) {
     _readingGroupView = null;
     _realtimeDataFactory = options.realtimeDataFactory || RealtimeDataFactory();
     _user = User.getCurrentUser();
+    _userFactory = options.userFactory || UserFactory();
 
     el.innerHTML = [
       '<section class="observation-view">',
@@ -172,6 +191,123 @@ var ObservationView = function (options) {
     });
   };
 
+  _addUserControls = function (controls) {
+    var admin,
+        observerLabel,
+        observerSelect,
+        reviewerLabel,
+        reviewerSelect,
+        users;
+
+    users = document.createElement('div');
+    users.className = 'left-aligned';
+
+    observerLabel = document.createElement('label');
+    observerLabel.className = 'print-hidden';
+    observerLabel.innerHTML = 'Observer';
+
+    observerSelect = document.createElement('select');
+    observerSelect.className = 'observer-select';
+    observerSelect.id = 'controls-observer';
+
+    reviewerLabel = document.createElement('label');
+    reviewerLabel.className = 'print-hidden';
+    reviewerLabel.innerHTML = 'Reviewer';
+
+    reviewerSelect = document.createElement('select');
+    reviewerSelect.className = 'reviewer-select';
+    reviewerSelect.id = 'controls-reviewer';
+
+    admin = document.createElement('p');
+    admin.className = 'alert info admin hidden';
+    admin.innerHTML = 'Selected reviewer is not an admin user';
+    // observer = [
+    //   '<div>',
+    //     '<label for="', idPrefix, '-observer" class="print-hidden">',
+    //       'Observer',
+    //     '</label>',
+    //     '<select id="', idPrefix, '-observer"',
+    //         ' class="observer-select" disabled="disabled"></select>',
+    //
+    //     '<label for="', idPrefix, '-reviewer" class="print-hidden">',
+    //       'Reviewer',
+    //     '</label>',
+    //     '<select id="',  idPrefix, '-reviewer"',
+    //         ' class="reviewer-select" disabled="disabled"></select>',
+    //     '<p class="alert info admin hidden">',
+    //       'Selected reviewer is not an admin user.',
+    //     '</p>',
+    //   '</div>',
+    // ].join('');
+    users.appendChild(observerLabel);
+    users.appendChild(observerSelect);
+    users.appendChild(reviewerLabel);
+    users.appendChild(reviewerSelect);
+    users.appendChild(admin);
+
+    controls.appendChild(users);
+
+    _observerSelect = observerSelect;
+    _observerSelectView = CollectionSelectBox({
+      el: observerSelect,
+      emptyText: 'Loading observers...',
+      formatOption: _formatUsername
+    });
+    _reviewerSelect = reviewerSelect;
+    _reviewerSelectView = CollectionSelectBox({
+      el: reviewerSelect,
+      emptyText: 'Loading reviewers...',
+      formatOption: _formatUsername
+    });
+    _admin = admin;
+
+    _observerSelectView.on('change', function (observer) {
+      var observer_id;
+
+      observer_id = _observation.get('observer_user_id');
+
+      if (observer === null) {
+          _observation.set({
+            observer_user_id: (observer_id ? observer_id : _user.get('id'))
+          });
+      } else {
+        _observation.set({
+          observer_user_id: observer.id
+        });
+      }
+    });
+
+    _reviewerSelectView.on('change', function (reviewer) {
+      var reviewer_id;
+
+      reviewer_id = _observation.get('reviewer_user_id');
+
+      if (reviewer === null) {
+          _observation.set({
+            reviewer_user_id: (reviewer_id ? reviewer_id : _user.get('id'))
+          });
+      } else {
+        _observation.set({
+          reviewer_user_id: reviewer.id
+        });
+
+        if (reviewer.get('admin') === 'Y') {
+          _admin.classList.add('hidden');
+        } else {
+          _admin.classList.remove('hidden');
+        }
+      }
+    });
+
+    _getUsers();
+    // load observers collection
+    // _observerSelectView.setCollection(_observationMetaView.observerCollection);
+    // _observerSelectView.selectById(_observation.get('observer_user_id'));
+    // // load reviewers collection
+    // _reviewerSelectView.setCollection(_observationMetaView.reviewerCollection);
+    // _reviewerSelectView.selectById(_observation.get('reviewer_user_id'));
+  };
+
   /**
    * Create a panel at the bottom of the Observation view to create, update,
    * or delete the observation.
@@ -188,6 +324,13 @@ var ObservationView = function (options) {
     admin = _user.get('admin');
     controls = _this.el.querySelector('.observation-view-controls');
     reviewed = _observation.get('reviewed').toLowerCase();
+
+    // Show observer and reviewer fields for admin.
+    if (admin === 'Y') {
+      _addUserControls(controls);
+    } else {
+      _removeUserControls(controls);
+    }
 
     statusLabel = document.createElement('span');
     statusLabel.className = 'review-status-' + reviewed;
@@ -246,6 +389,23 @@ var ObservationView = function (options) {
     }
 
     return '<li>' + markup.join('</li><li>') + '</li>';
+  };
+
+  /**
+   * Formatting callback for observer select view.
+   *
+   * @param observer {User}
+   * @return {String} content for option element.
+   */
+  _formatUsername = function (user) {
+    var name;
+
+    name = user.get('username');
+    if (user.get('enabled') === 'N') {
+      name = name + ' (disabled)';
+    }
+
+    return name;
   };
 
   /**
@@ -323,6 +483,40 @@ var ObservationView = function (options) {
       }
     });
 
+  };
+
+  /**
+   * Input element change handler.
+   *
+   * Updated observation begin and pier_temperature attributes from form.
+   */
+
+  _getUsers = function () {
+    _userFactory.get({
+      success: function (data) {
+        data = data.map(function (info) {return User(info);});
+
+        data.sort(function(a, b) {
+          // sort alphabetically by username.
+          if (a.get('username') < b.get('username')) {
+            return -1;
+          } else {
+            return 1;
+          }
+        });
+
+        _observerCollection = Collection(data);
+        _reviewerCollection = Collection(data);
+
+        // load observers collection
+        _observerSelectView.setCollection(_observerCollection);
+        _observerSelectView.selectById(_observation.get('observer_user_id'));
+        // load reviewers collection
+        _reviewerSelectView.setCollection(_reviewerCollection);
+        _reviewerSelectView.selectById(_observation.get('reviewer_user_id'));
+      },
+      error: function () {/* TODO :: Show modal dialog error message */}
+    });
   };
 
   _onChange = function () {
@@ -713,9 +907,12 @@ var ObservationView = function (options) {
       _removeEventListeners();
 
       // Clean up private methods
+      _addUserControls = null;
       _createControls = null;
+      _formatUsername = null;
       _formatMeasurementErrors = null;
       _getRealtimeData = null;
+      _getUsers = null;
       _onChange = null;
       _onObservatorySelect = null;
       _onPublishClick = null;
@@ -723,21 +920,30 @@ var ObservationView = function (options) {
       _publishObservation = null;
       _removeControls = null;
       _removeEventListeners = null;
+      _removeUserControls = null;
       _saveObservation = null;
       _setObservation = null;
       _setObservatories = null;
       _updateErrorCount = null;
 
       // Clean up private variables
+      _admin = null;
       _annotation = null;
       _calculator = null;
       _factory = null;
       _observation = null;
       _observatories = null;
       _observationMetaView = null;
+      _observerCollection = null;
+      _observerSelect = null;
+      _observerSelectView = null;
       _readingGroupView = null;
       _realtimeDataFactory = null;
+      _reviewerCollection = null;
+      _reviewerSelect = null;
+      _reviewerSelectView = null;
       _user = null;
+      _userFactory = null;
     },
     // parent class destroy method
     _this.destroy);

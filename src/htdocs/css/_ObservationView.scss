@@ -36,6 +36,11 @@
     }
   }
 
+  .admin {
+    margin: 0;
+    padding: 8px 10px;
+  }
+
   textarea#observation-remarks {
     width: 100%;
   }
@@ -59,6 +64,37 @@
       margin: 0;
     }
 
+  }
+
+// left and right stack, and change label text alignment
+  @media screen and (min-width:768px) {
+    .left-aligned {
+      > label {
+        float: left;
+        clear: left;
+        width: 7em;
+        padding-right: 8px;
+      }
+
+      > select,
+      > .admin {
+        float: left;
+        margin-bottom: 5px;
+      }
+
+      &:after {
+        display: block;
+        content: ' ';
+        clear: both;
+      }
+    }
+
+    .right-aligned {
+      > label,
+      > .label {
+        text-align: right;
+      }
+    }
   }
 }
 
