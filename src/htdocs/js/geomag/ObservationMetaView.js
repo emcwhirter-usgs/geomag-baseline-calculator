@@ -90,7 +90,6 @@ var ObservationMetaView = function (options) {
       _userFactory,
 
       _createViewSkeleton,
-      _getUsers,
       _onDateChange,
       _onPierTempChange,
       _setObservatory,
@@ -118,7 +117,13 @@ var ObservationMetaView = function (options) {
     _reviewerCollection = options.reviewerCollection;
 
     _createViewSkeleton();
-    _getUsers();
+
+    // load observers collection
+    _observerSelectView.setCollection(_observerCollection);
+    _observerSelectView.selectById(_observation.get('observer_user_id'));
+    // load reviewers collection
+    _reviewerSelectView.setCollection(_reviewerCollection);
+    _reviewerSelectView.selectById(_observation.get('reviewer_user_id'));
 
     // fill in observation inputs
     _this.render();
@@ -391,47 +396,6 @@ var ObservationMetaView = function (options) {
     _observatorySelectView.selectById(_observatoryId);
   };
 
-  /**
-   * Input element change handler.
-   *
-   * Updated observation begin and pier_temperature attributes from form.
-   */
-
-  _getUsers = function () {
-    // _userFactory.get({
-    //   success: function (data) {
-    //     data = data.map(function (info) {return User(info);});
-    //
-    //     data.sort(function(a, b) {
-    //       // sort alphabetically by username.
-    //       if (a.get('username') < b.get('username')) {
-    //         return -1;
-    //       } else {
-    //         return 1;
-    //       }
-    //     });
-    //
-    //     _observerCollection = Collection(data);
-    //     _reviewerCollection = Collection(data);
-    //
-    //     // load observers collection
-    //     _observerSelectView.setCollection(_observerCollection);
-    //     _observerSelectView.selectById(_observation.get('observer_user_id'));
-    //     // load reviewers collection
-    //     _reviewerSelectView.setCollection(_reviewerCollection);
-    //     _reviewerSelectView.selectById(_observation.get('reviewer_user_id'));
-    //   },
-    //   error: function () {/* TODO :: Show modal dialog error message */}
-    // });
-
-    // load observers collection
-    _observerSelectView.setCollection(_observerCollection);
-    _observerSelectView.selectById(_observation.get('observer_user_id'));
-    // load reviewers collection
-    _reviewerSelectView.setCollection(_reviewerCollection);
-    _reviewerSelectView.selectById(_observation.get('reviewer_user_id'));
-  };
-
   _onDateChange = function () {
     try {
       _observation.set({
@@ -581,7 +545,6 @@ var ObservationMetaView = function (options) {
 
         // Clean up private methods
         _createViewSkeleton = null;
-        _getUsers = null;
         _onDateChange = null;
         _onPierTempChange = null;
         _setObservatory = null;
