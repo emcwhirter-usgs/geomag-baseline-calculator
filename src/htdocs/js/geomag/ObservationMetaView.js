@@ -562,10 +562,12 @@ var ObservationMetaView = function (options) {
         _observatoryId = null;
         _observatorySelectView = null;
         _observatories = null;
+        _observerCollection = null;
         _observerSelect = null;
         _observerSelectView = null;
         _pierSelectView = null;
         _pierTemperature = null;
+        _reviewerCollection = null;
         _reviewerSelect = null;
         _reviewerSelectView = null;
         _theodoliteSelectView = null;
@@ -578,7 +580,6 @@ var ObservationMetaView = function (options) {
   _this.render = function () {
     var begin = new Date(_observation.get('begin') || (new Date()).getTime()),
         begin_error = _observation.get('begin_error'),
-        reviewed = _observation.get('reviewed'),
         user_admin = _user.get('admin');
 
     if (begin_error === null) {
@@ -590,9 +591,8 @@ var ObservationMetaView = function (options) {
 
     _pierTemperature.value = _observation.get('pier_temperature');
 
-    // Disable the observer and reviewer select if non-admin user or
-    //  finalized observation.
-    if (user_admin === 'N' || reviewed === 'Y') {
+    // Disable the observer and reviewer select if non-admin user.
+    if (user_admin === 'N') {
       _observerSelect.setAttribute('disabled', 'disabled');
       _reviewerSelect.setAttribute('disabled', 'disabled');
     } else {
