@@ -113,17 +113,10 @@ var ObservationMetaView = function (options) {
     _userFactory = options.userFactory;
     _user = User.getCurrentUser();
 
-    _observerCollection = options.observerCollection;
-    _reviewerCollection = options.reviewerCollection;
+    _observerCollection = options.observerCollection || Collection();
+    _reviewerCollection = options.reviewerCollection || Collection();
 
     _createViewSkeleton();
-
-    // load observers collection
-    _observerSelectView.setCollection(_observerCollection);
-    _observerSelectView.selectById(_observation.get('observer_user_id'));
-    // load reviewers collection
-    _reviewerSelectView.setCollection(_reviewerCollection);
-    _reviewerSelectView.selectById(_observation.get('reviewer_user_id'));
 
     // fill in observation inputs
     _this.render();
@@ -394,6 +387,13 @@ var ObservationMetaView = function (options) {
     // load observatories collection
     _observatorySelectView.setCollection(_observatories);
     _observatorySelectView.selectById(_observatoryId);
+
+    // load observers collection
+    _observerSelectView.setCollection(_observerCollection);
+    _observerSelectView.selectById(_observation.get('observer_user_id'));
+    // load reviewers collection
+    _reviewerSelectView.setCollection(_reviewerCollection);
+    _reviewerSelectView.selectById(_observation.get('reviewer_user_id'));
   };
 
   _onDateChange = function () {
