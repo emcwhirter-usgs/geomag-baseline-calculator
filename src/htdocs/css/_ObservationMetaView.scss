@@ -8,12 +8,11 @@
   .right-aligned {
     > label,
     > .label {
-      padding: 0;
-      margin: 0;
       display: block;
       font-weight: bold;
-      padding-right: 5px;
       line-height: 1.9;
+      margin: 0;
+      padding: 0 5px 0 0;
     }
 
     > input,
@@ -35,12 +34,12 @@
   }
 
   .julian-day-value {
-    padding: 0.5em;
-    font-size: 0.75em;
     background: #f8f8f8;
-    width: 3em;
+    font-size: 0.75em;
     margin-left: 2px;
+    padding: 0.5em;
     text-align: center;
+    width: 3em;
   }
 
   .hidden {
@@ -54,10 +53,10 @@
     .right-aligned {
       > label,
       > .label {
-        float: left;
         clear: left;
-        width: 7em;
+        float: left;
         padding-right: 8px;
+        width: 7em;
       }
 
       > input,
@@ -70,9 +69,9 @@
       }
 
       &:after {
-        display: block;
         content: ' ';
         clear: both;
+        display: block;
       }
     }
 
@@ -108,7 +107,7 @@
       }
     }
     input.reviewer-name {
-        display:none;
+      display:none;
     }
   }
 
