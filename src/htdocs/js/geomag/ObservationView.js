@@ -117,7 +117,6 @@ var ObservationView = function (options) {
       _initialize,
 
       _admin,
-      _adminAlert,
       _annotation,
       _calculator,
       _factory,
@@ -259,7 +258,8 @@ var ObservationView = function (options) {
    *
    */
   _createUserControls = function (controls) {
-    var observerLabel,
+    var adminAlert,
+        observerLabel,
         observerSelect,
         reviewerLabel,
         reviewerSelect,
@@ -285,15 +285,15 @@ var ObservationView = function (options) {
       reviewerSelect.className = 'reviewer-select';
       reviewerSelect.id = 'controls-reviewer';
 
-      _adminAlert = document.createElement('p');
-      _adminAlert.className = 'alert info admin hidden';
-      _adminAlert.innerHTML = 'Selected reviewer is not an admin user';
+      adminAlert = document.createElement('p');
+      adminAlert.className = 'alert info admin hidden';
+      adminAlert.innerHTML = 'Selected reviewer is not an admin user';
 
       users.appendChild(observerLabel);
       users.appendChild(observerSelect);
       users.appendChild(reviewerLabel);
       users.appendChild(reviewerSelect);
-      users.appendChild(_adminAlert);
+      users.appendChild(adminAlert);
 
       controls.appendChild(users);
 
@@ -344,9 +344,9 @@ var ObservationView = function (options) {
           });
 
           if (reviewer.get('admin') === 'Y') {
-            _adminAlert.classList.add('hidden');
+            adminAlert.classList.add('hidden');
           } else {
-            _adminAlert.classList.remove('hidden');
+            adminAlert.classList.remove('hidden');
           }
         }
       });
@@ -875,7 +875,6 @@ var ObservationView = function (options) {
 
       // Clean up private variables
       _admin = null;
-      _adminAlert = null;
       _annotation = null;
       _calculator = null;
       _factory = null;
