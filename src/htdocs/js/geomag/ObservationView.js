@@ -260,9 +260,7 @@ var ObservationView = function (options) {
   _createUserControls = function (controls) {
     var adminAlert,
         observerLabel,
-        observerSelect,
         reviewerLabel,
-        reviewerSelect,
         users;
 
     if (_user.get('admin') === 'Y') {
@@ -273,45 +271,41 @@ var ObservationView = function (options) {
       observerLabel.className = 'print-hidden';
       observerLabel.innerHTML = 'Observer';
 
-      observerSelect = document.createElement('select');
-      observerSelect.className = 'observer-select';
-      observerSelect.id = 'controls-observer';
+      _observerSelect = document.createElement('select');
+      _observerSelect.className = 'observer-select';
+      _observerSelect.id = 'controls-observer';
 
       reviewerLabel = document.createElement('label');
       reviewerLabel.className = 'print-hidden';
       reviewerLabel.innerHTML = 'Reviewer';
 
-      reviewerSelect = document.createElement('select');
-      reviewerSelect.className = 'reviewer-select';
-      reviewerSelect.id = 'controls-reviewer';
+      _reviewerSelect = document.createElement('select');
+      _reviewerSelect.className = 'reviewer-select';
+      _reviewerSelect.id = 'controls-reviewer';
 
       adminAlert = document.createElement('p');
       adminAlert.className = 'alert info admin hidden';
       adminAlert.innerHTML = 'Selected reviewer is not an admin user';
 
       users.appendChild(observerLabel);
-      users.appendChild(observerSelect);
+      users.appendChild(_observerSelect);
       users.appendChild(reviewerLabel);
-      users.appendChild(reviewerSelect);
+      users.appendChild(_reviewerSelect);
       users.appendChild(adminAlert);
 
       controls.appendChild(users);
 
-      _observerSelect = observerSelect;
       _observerSelectView = CollectionSelectBox({
-        el: observerSelect,
+        el: _observerSelect,
         emptyText: 'Loading observers...',
         formatOption: Format.username
       });
 
-      _reviewerSelect = reviewerSelect;
       _reviewerSelectView = CollectionSelectBox({
-        el: reviewerSelect,
+        el: _reviewerSelect,
         emptyText: 'Loading reviewers...',
         formatOption: Format.username
       });
-
-      // _admin = admin;
 
       _observerSelectView.on('change', function (observer) {
         var observer_id;
